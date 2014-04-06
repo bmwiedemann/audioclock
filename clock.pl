@@ -4,6 +4,7 @@ use warnings;
 # zypper in perl-Alien-SDL perl-SDL
 
 use SDLx::Sound;
+use POSIX; # for close
 use Time::HiRes qw"gettimeofday usleep sleep";
 my $snd = SDLx::Sound->new();
 
@@ -50,6 +51,7 @@ sub ticktack()
     my $h = 1 + ($sec/3600 - 1) % 12;
     dongs($h)
   }
+  for(4..32) { POSIX::close($_); }
   $snd->play('tick-tack.wav');
   sleep 1.9;
 }
