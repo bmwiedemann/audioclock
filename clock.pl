@@ -1,4 +1,7 @@
 #!/usr/bin/perl
+# written 2014 by Bernhard M. Wiedemann
+# licensed under the terms of the GNU GPL v2 or later
+# see the included COPYING file for details
 use strict;
 use warnings;
 # zypper in perl-Alien-SDL perl-SDL
