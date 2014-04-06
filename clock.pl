@@ -15,7 +15,7 @@ sub waittosec()
 {
   my $t=[gettimeofday()];
   print "@$t\n";
-  usleep(1000000-$t->[1]);
+  usleep(($t->[0]&1)*1000000 + 1000000-$t->[1]);
   return $t;
 }
 
