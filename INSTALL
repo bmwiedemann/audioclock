@@ -1,0 +1,3 @@
+To install the required dependencies, do
+
+zypper in perl-SDL perl-Alien-SDL
