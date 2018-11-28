@@ -11,6 +11,11 @@ use POSIX; # for close
 use Time::HiRes qw"gettimeofday usleep sleep";
 my $snd = SDLx::Sound->new();
 
+sub play($)
+{
+  return $snd->play("$_[0].wav");
+}
+
 sub waittosec()
 {
   my $t=[gettimeofday()];
@@ -21,12 +26,12 @@ sub waittosec()
 
 sub dong(;$)
 { my $t=shift||1.9;
-  $snd->play('dong-end.wav'); sleep $t;
+  play('dong-end'); sleep $t;
   waittosec;
 }
 sub clack()
 {
-  $snd->play('clack.wav');
+  play('clack');
   sleep 1.9;
 }
 
@@ -55,7 +60,7 @@ sub ticktack()
     dongs($h)
   }
   for(4..32) { POSIX::close($_); }
-  $snd->play('tick-tack.wav');
+  play('tick-tack');
   sleep 1.9;
 }
 
