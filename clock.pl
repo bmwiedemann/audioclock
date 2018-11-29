@@ -46,27 +46,27 @@ sub clack()
   sleep 1.9;
 }
 
-sub dong_end() {dong(13.9)}
-
-sub dongs($)
+sub dongs($;$)
 { my $n=shift;
+  my $fullhour=shift||0;
   for(2..$n) {dong}
-  dong_end;
+  dong($fullhour?5.9:13.9);
 }
 
 sub ticktack()
 {
   my $t=waittosec;
   my $sec=$t->[0];
+  my $fullhour = $sec % 3600<3;
   if($sec % 60<2) { # every minute
     clack();
     waittosec;
   }
   if($sec % 900<3) { # dong every quarter hour
     my $quarter= 1 + ($sec/900 - 1) % 4;
-    dongs($quarter);
+    dongs($quarter, $fullhour);
   }
-  if($sec % 3600<3) { # full hour count (UTC)
+  if($fullhour) { # full hour count (UTC)
     my $h = 1 + ($sec/3600 - 1) % 12;
     dongs($h)
   }
@@ -77,7 +77,7 @@ sub ticktack()
 
 # test-code:
 #for(1..3) {dong}
-#dong_end;
+#dong(13.9);
 
 # main:
 while(1) {
