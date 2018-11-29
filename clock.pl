@@ -15,7 +15,7 @@ use Time::HiRes qw"gettimeofday usleep sleep";
 SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 );
 
 my %sound=();
-for(qw"tick-tack clack dong-end") {
+for(qw"tick-tack clack dong-end dong-end-deep") {
   $sound{$_} = SDL::Mixer::Samples::load_WAV("$_.wav")
     or die "failed to load $_: $!";
 }
@@ -35,9 +35,10 @@ sub waittosec()
   return $t;
 }
 
-sub dong(;$)
+sub dong(;$$)
 { my $t=shift||1.9;
-  play('dong-end'); sleep $t;
+  my $deep=shift||"";
+  play('dong-end'.$deep); sleep $t;
   waittosec;
 }
 sub clack()
@@ -46,11 +47,12 @@ sub clack()
   sleep 1.9;
 }
 
-sub dongs($;$)
+sub dongs($;$$)
 { my $n=shift;
   my $fullhour=shift||0;
-  for(2..$n) {dong}
-  dong($fullhour?5.9:13.9);
+  my $deep=shift;
+  for(2..$n) {dong(1.9, $deep)}
+  dong($fullhour?5.9:13.9, $deep);
 }
 
 sub ticktack()
@@ -68,7 +70,7 @@ sub ticktack()
   }
   if($fullhour) { # full hour count (UTC)
     my $h = 1 + ($sec/3600 - 1) % 12;
-    dongs($h)
+    dongs($h, 0, "-deep")
   }
   play('tick-tack');
   sleep 1.9;
