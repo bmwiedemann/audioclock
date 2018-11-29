@@ -6,14 +6,25 @@ use strict;
 use warnings;
 # zypper in perl-Alien-SDL perl-SDL
 
-use SDLx::Sound;
+use SDL::Mixer;
+use SDL::Mixer::Channels;
+use SDL::Mixer::Samples;
 use POSIX; # for close
 use Time::HiRes qw"gettimeofday usleep sleep";
-my $snd = SDLx::Sound->new();
+
+SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 );
+
+my %sound=();
+for(qw"tick-tack clack dong-end") {
+  $sound{$_} = SDL::Mixer::Samples::load_WAV("$_.wav")
+    or die "failed to load $_: $!";
+}
 
 sub play($)
 {
-  return $snd->play("$_[0].wav");
+  my $s = $sound{$_[0]};
+  SDL::Mixer::Channels::play_channel(1, $s, 0)
+    or die "failed to play $_[0] $s: $!";
 }
 
 sub waittosec()
@@ -59,7 +70,6 @@ sub ticktack()
     my $h = 1 + ($sec/3600 - 1) % 12;
     dongs($h)
   }
-  for(4..32) { POSIX::close($_); }
   play('tick-tack');
   sleep 1.9;
 }
