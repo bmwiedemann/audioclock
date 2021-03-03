@@ -1,2 +1,2 @@
 run:
-	./clock.pl
+	./audioclock
