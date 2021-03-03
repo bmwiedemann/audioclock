@@ -14,8 +14,14 @@ use Time::HiRes qw(gettimeofday usleep);
 SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 );
 
 my %sound=();
+my $datadir;
+for($ENV{AUDIOCLOCKDATADIR}, "/usr/share/audioclock", ".") {
+  next unless defined $_ and -e $_;
+  $datadir = $_;
+  last;
+}
 for(qw"tick-tack clack dong-end dong-end-deep") {
-  $sound{$_} = SDL::Mixer::Samples::load_WAV("$_.wav")
+  $sound{$_} = SDL::Mixer::Samples::load_WAV($datadir."/$_.wav")
     or die "failed to load $_: $!";
 }
 
