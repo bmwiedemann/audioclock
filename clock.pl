@@ -9,8 +9,7 @@ use warnings;
 use SDL::Mixer;
 use SDL::Mixer::Channels;
 use SDL::Mixer::Samples;
-use POSIX; # for close
-use Time::HiRes qw"gettimeofday usleep sleep";
+use Time::HiRes qw(gettimeofday usleep);
 
 SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 );
 
@@ -30,7 +29,7 @@ sub play($)
 sub waittosec()
 {
   my $t=[gettimeofday()];
-  print "@$t\n";
+  #print "@$t\n";
   usleep(($t->[0]&1)*1000000 + 1000000-$t->[1]);
   return $t;
 }
@@ -44,7 +43,7 @@ sub dong(;$$)
 sub clack()
 {
   play('clack');
-  sleep 1.9;
+  usleep 1900000;
 }
 
 sub dongs($;$$)
@@ -73,7 +72,7 @@ sub ticktack()
     dongs($h, 0, "-deep")
   }
   play('tick-tack');
-  sleep 1.9;
+  usleep 1900000;
 }
 
 
