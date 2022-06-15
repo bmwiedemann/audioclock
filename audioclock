@@ -65,7 +65,7 @@ sub ticktack()
   my $t=waittosec;
   my $sec=$t->[0];
   my $fullhour = $sec % 3600<3;
-  if($sec % 60<2) { # every minute
+  if($sec % 60>57) { # every minute
     clack();
     waittosec;
   }
