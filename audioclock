@@ -35,7 +35,6 @@ sub play($)
 sub waittosec()
 {
   my $t=[gettimeofday()];
-  #print "@$t\n";
   usleep(($t->[0]&1)*1000000 + 1000000-$t->[1]);
   return $t;
 }
@@ -81,10 +80,6 @@ sub ticktack()
   usleep 1900000;
 }
 
-
-# test-code:
-#for(1..3) {dong}
-#dong(13.9);
 
 $SIG{TERM} = $SIG{INT} = sub {exit 0};
 
