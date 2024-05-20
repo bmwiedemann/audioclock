@@ -17,7 +17,7 @@
 
 
 Name:           audioclock
-Version:        1.1
+Version:        1.3.1
 Release:        0
 Summary:        An audible clock
 License:        GPL-2.0+
@@ -26,7 +26,6 @@ Group:          Amusements/Toys/Clocks
 BuildArch:      noarch
 Source0:        https://github.com/bmwiedemann/audioclock/archive/refs/tags/v%version.tar.gz#/%name-%version.tar.gz
 Requires:       perl(SDL::Mixer)
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 %description
 This tool emulates the audio of a mechanical clock.
@@ -38,10 +37,9 @@ It shall help to notice the passing of time.
 %build
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT/usr
+make install DESTDIR=%{buildroot}/usr
 
 %files
-%defattr(-,root,root)
 %{_bindir}/audioclock
 %{_datadir}/%name
 %license COPYING README.md
