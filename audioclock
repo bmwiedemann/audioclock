@@ -62,19 +62,20 @@ sub dongs($;$$)
 sub ticktack()
 {
   my $t=waittosec;
-  my $sec=$t->[0];
-  my $fullhour = $sec % 3600<3;
-  if($sec % 60>57) { # every minute
+  my ($s,$m,$h) = localtime($t->[0]);
+  if($s>57) { # every minute
     clack();
     waittosec;
   }
-  if($sec % 900<3) { # dong every quarter hour
-    my $quarter= 1 + ($sec/900 - 1) % 4;
+  if(!($m % 15) and $s<3) { # dong every quarter hour
+    my $quarter = int($m/15) || 4;
+    my $fullhour = ($m == 0);
     dongs($quarter, $fullhour);
-  }
-  if($fullhour) { # full hour count (UTC)
-    my $h = 1 + ($sec/3600 - 1) % 12;
-    dongs($h, 0, "-deep")
+    if($fullhour) {
+      # full hour count (considering local timezone)
+      my $h = $h % 12 || 12;
+      dongs($h, 0, "-deep")
+    }
   }
   play('tick-tack');
   usleep 1900000;
