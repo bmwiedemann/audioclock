@@ -24,7 +24,7 @@ License:        GPL-2.0+
 Url:            https://github.com/bmwiedemann/audioclock
 Group:          Amusements/Toys/Clocks
 BuildArch:      noarch
-Source0:        https://github.com/bmwiedemann/audioclock/archive/refs/tags/v%version.tar.gz#/%name-%version.tar.gz
+Source0:        %name-%version.tar.gz
 Requires:       perl(SDL::Mixer)
 
 %description
