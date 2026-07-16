@@ -1,0 +1,10 @@
+[Unit]
+Description=An audible clock
+
+[Service]
+ExecStart=/usr/bin/audioclock
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
