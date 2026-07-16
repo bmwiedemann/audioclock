@@ -17,7 +17,7 @@
 
 
 Name:           audioclock
-Version:        1.3.3
+Version:        1.3.4
 Release:        0
 Summary:        An audible clock
 License:        GPL-2.0-or-later
