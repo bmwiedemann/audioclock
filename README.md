@@ -5,3 +5,14 @@ Sounds are based on a recording by lonemonk Copyright 2008
 Licensed under CC-BY-3.0 https://creativecommons.org/licenses/by/3.0/
 http://www.freesound.org/people/lonemonk/sounds/62579/
 
+## Install
+
+```bash
+zypper in audioclock
+```
+
+## Usage
+
+```bash
+systemctl --user enable --now audioclock.service
+```
