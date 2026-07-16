@@ -1,6 +1,8 @@
-DESTDIR?=/usr
-DATADIR?=/share/audioclock
-BINDIR?=/bin
+PREFIX?=/usr
+DATADIR?=${PREFIX}/share/audioclock
+BINDIR?=${PREFIX}/bin
+
+.PHONY: run install
 run:
 	./audioclock
 

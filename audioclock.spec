@@ -39,7 +39,7 @@ It shall help to notice the passing of time.
 %build
 
 %install
-make install DESTDIR=%{buildroot}/usr
+%make_install
 install -d %{buildroot}%{_userunitdir}
 install -p -m 644 %name.service %{buildroot}%{_userunitdir}/%name.service
 
