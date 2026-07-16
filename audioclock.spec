@@ -20,7 +20,7 @@ Name:           audioclock
 Version:        1.3.3
 Release:        0
 Summary:        An audible clock
-License:        GPL-2.0+
+License:        GPL-2.0-or-later
 Url:            https://github.com/bmwiedemann/audioclock
 Group:          Amusements/Toys/Clocks
 BuildArch:      noarch
@@ -47,6 +47,7 @@ install -p -m 644 %name.service %{buildroot}%{_userunitdir}/%name.service
 %{_bindir}/audioclock
 %{_datadir}/%name
 %{_userunitdir}/%name.service
-%license COPYING README.md
+%license COPYING
+%doc README.md
 
 %changelog
