@@ -6,13 +6,27 @@ use strict;
 use warnings;
 # zypper in perl-Alien-SDL perl-SDL
 
+use SDL;
 use SDL::Mixer;
 use SDL::Mixer::Channels;
 use SDL::Mixer::Samples;
 use Time::HiRes qw(gettimeofday sleep usleep);
 
-SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0
-  or die "failed to open audio: ".SDL::get_error();
+my $soundchannel=1;
+my $probechannel=2; # only used to detect a broken audio device
+my $audioopen=0;
+my $audiolost=0;
+my $activevt="";
+my $reopenticks=0; # reopen the device on the next N checks
+
+sub openaudio()
+{
+  $audioopen = SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0;
+  SDL::Mixer::Channels::volume($probechannel, 0) if $audioopen; # keep the probe silent
+  return $audioopen;
+}
+
+openaudio() or die "failed to open audio: ".SDL::get_error();
 
 my %sound=();
 my $datadir;
@@ -28,9 +42,51 @@ for(qw"tick-tack clack dong-end dong-end-deep") {
 
 sub play($)
 {
+  return unless $audioopen;
   my $s = $sound{$_[0]};
-  SDL::Mixer::Channels::play_channel(1, $s, 0) != -1
-    or die "failed to play $_[0]: ".SDL::get_error();
+  SDL::Mixer::Channels::play_channel($soundchannel, $s, 0) != -1
+    or warn "failed to play $_[0]: ".SDL::get_error()."\n";
+}
+
+sub reopenaudio()
+{ # closing and opening the device is not enough - SDL keeps its dead
+  # audio thread until the whole audio subsystem is torn down
+  SDL::Mixer::close_audio() if $audioopen;
+  $audioopen = 0;
+  SDL::quit_sub_system(SDL_INIT_AUDIO);
+  SDL::init_sub_system(SDL_INIT_AUDIO);
+  openaudio();
+  # the samples stay valid: they were converted to the same output format
+}
+
+sub vtswitched()
+{ # tell whether the foreground virtual screen changed
+  open(my $fh, "<", "/sys/class/tty/tty0/active") or return 0;
+  my $vt = <$fh>;
+  close $fh;
+  return 0 if !defined $vt;
+  my $switched = ($activevt ne "" and $vt ne $activevt);
+  $activevt = $vt;
+  return $switched;
+}
+
+sub checkaudio()
+{ # sometimes losing the device kills SDL's mixing, leaving channels busy
+  # forever - the probe started 2 seconds ago expired long ago if all is well
+  my $lost = !$audioopen || SDL::Mixer::Channels::playing($probechannel);
+  if($lost) {
+    warn "lost audio device - reopening it until it works again\n" unless $audiolost++;
+  } elsif($audiolost) {
+    warn "audio device is back\n";
+    $audiolost = 0;
+  }
+  # and sometimes pipewire just parks our stream on a dummy sink while the
+  # device belongs to another virtual screen, which SDL cannot notice at all,
+  # so also reopen for a while after every switch until the device is back
+  $reopenticks = 10 if vtswitched();
+  reopenaudio() if $lost or ($reopenticks and $reopenticks--);
+  SDL::Mixer::Channels::play_channel_timed($probechannel, $sound{'tick-tack'}, 0, 200)
+    if $audioopen;
 }
 
 sub waittosec()
@@ -63,6 +119,7 @@ sub dongs($;$$)
 sub ticktack()
 {
   my $t=waittosec;
+  checkaudio();
   my ($s,$m,$h) = localtime($t->[0]);
   if($s>57) { # every minute
     clack();
